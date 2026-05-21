@@ -1,0 +1,240 @@
+namespace ConsoleApp2
+{
+    class Square
+    {
+        private int a;
+
+        public int A
+        {
+            get { return a; }
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentException("Side cannot be negative.");
+
+                a = value;
+            }
+        }
+
+        public Square(int a)
+        {
+            if (a < 0)
+                throw new ArgumentException("Side cannot be negative.");
+
+            this.a = a;
+        }
+
+        public Square() : this(0) { }
+
+        public override string ToString()
+        {
+            return $"Square with side length {a}";
+        }
+
+        // ++ --
+        public static Square operator ++(Square s)
+        {
+            return new Square(s.a + 1);
+        }
+
+        public static Square operator --(Square s)
+        {
+            if (s.a - 1 < 0)
+                throw new ArgumentException("Side cannot be negative.");
+
+            return new Square(s.a - 1);
+        }
+
+        // + - * /
+        public static Square operator +(Square s1, Square s2)
+        {
+            return new Square(s1.a + s2.a);
+        }
+
+        public static Square operator -(Square s1, Square s2)
+        {
+            if (s1.a - s2.a < 0)
+                throw new ArgumentException("Resulting side cannot be negative.");
+
+            return new Square(s1.a - s2.a);
+        }
+
+        public static Square operator *(Square s1, Square s2)
+        {
+            return new Square(s1.a * s2.a);
+        }
+
+        public static Square operator /(Square s1, Square s2)
+        {
+            if (s2.a == 0)
+                throw new DivideByZeroException();
+
+            return new Square(s1.a / s2.a);
+        }
+
+        // == !=
+        public static bool operator ==(Square s1, Square s2)
+        {
+            if (ReferenceEquals(s1, s2))
+                return true;
+
+            if (s1 is null || s2 is null)
+                return false;
+
+            return s1.a == s2.a;
+        }
+
+        public static bool operator !=(Square s1, Square s2)
+        {
+            return !(s1 == s2);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Square s)
+            {
+                return this.a == s.a;
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return a.GetHashCode();
+        }
+
+        // < > <= >=
+        public static bool operator <(Square s1, Square s2)
+        {
+            return s1.a < s2.a;
+        }
+
+        public static bool operator >(Square s1, Square s2)
+        {
+            return s1.a > s2.a;
+        }
+
+        public static bool operator <=(Square s1, Square s2)
+        {
+            return s1.a <= s2.a;
+        }
+
+        public static bool operator >=(Square s1, Square s2)
+        {
+            return s1.a >= s2.a;
+        }
+
+        // true false
+        public static bool operator true(Square s)
+        {
+            return s.a != 0;
+        }
+
+        public static bool operator false(Square s)
+        {
+            return s.a == 0;
+        }
+
+        // conversions
+        public static implicit operator int(Square s)
+        {
+            return s.a;
+        }
+
+        public static explicit operator Square(int value)
+        {
+            return new Square(value);
+        }
+
+        public static implicit operator Rectangle(Square s)
+        {
+            return new Rectangle(s.a, s.a);
+        }
+
+        public static explicit operator Square(Rectangle r)
+        {
+            if (r.A != r.B)
+                throw new InvalidCastException(
+                    "Cannot convert non-square rectangle to square.");
+
+            return new Square(r.A);
+        }
+    }
+
+    class Rectangle
+    {
+        private int a;
+        private int b;
+
+        public int A
+        {
+            get { return a; }
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentException("Side cannot be negative.");
+
+                a = value;
+            }
+        }
+
+        public int B
+        {
+            get { return b; }
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentException("Side cannot be negative.");
+
+                b = value;
+            }
+        }
+
+        public Rectangle(int a, int b)
+        {
+            if (a < 0 || b < 0)
+                throw new ArgumentException("Sides cannot be negative.");
+
+            this.a = a;
+            this.b = b;
+        }
+
+        public Rectangle() : this(0, 0) { }
+
+        public override string ToString()
+        {
+            return $"Rectangle with sides {a} and {b}";
+        }
+
+        // explicit Rectangle -> int
+        public static explicit operator int(Rectangle r)
+        {
+            return r.a * r.b;
+        }
+    }
+
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Square s1 = new Square(5);
+            Square s2 = new Square(3);
+            Square sum = s1 + s2;
+
+            Console.WriteLine(sum);
+
+            Rectangle rect = s1;
+            Console.WriteLine(rect);
+
+            int value = s1;
+            Console.WriteLine(value);
+
+            Square sq = (Square)new Rectangle(4, 4);
+            Console.WriteLine(sq);
+
+            int area = (int)new Rectangle(4, 5);
+            Console.WriteLine(area);
+        }
+    }
+}
